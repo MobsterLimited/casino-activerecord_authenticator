@@ -65,6 +65,10 @@ class CASino::ActiveRecordAuthenticator
 
   def valid_password?(password, password_from_database)
     return false if password_from_database.blank?
+
+    # SHA256 password if enabled
+    password = Digest::SHA256.hexdigest(password) if @options[:additional_digest] && @options[:additional_digest] == 'sha256'
+
     magic = password_from_database.split('$')[1]
     case magic
     when /\A2a?\z/
